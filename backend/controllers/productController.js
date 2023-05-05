@@ -1,43 +1,65 @@
 const PRODUCT = require("../models/productModel");
 const ApiFeatures = require("../utils/apifeatures");
+const getDataUri = require("../utils/dataUri");
 const ErrorHandler = require("../utils/errorHandler");
+const cloudinary=require("cloudinary")
 
 
 
 
-const createProduct=async()=>{
+const createProduct=async(req,res,next)=>{
 
-let images=[];
+  try{
+   
 
-if(typeof req.body.images==="string"){
-images.push(req.body.images)
-}else{
-    images=req.body.images
-}
+    let images=[];
+    
+    if(typeof req.images==="string"){
+    images.push(req.body.images)
+    }else{
+        images=req.files
+    }
 
-const imageLink=[];
+    const imageLink=[]
+    for(let i=0;i<images.length;i++){
+    
+       const fileuri=getDataUri(images[i])
 
-for(let i=0;i<images.length;i++){
+          const result=await cloudinary.v2.uploader.upload(fileuri.content,{
+            folder:"avatars"
+          })
+      
+      imageLink.push({
+          public_id:result.public_id,
+          url:result.secure_url
+      })
+      
+      }
+      
+    
+      req.body.images=imageLink;
+      req.body.user=req.user._id;
+      
+      const product=await PRODUCT.create(req.body)
+      
+      
+      res.status(201).json({
+          success: true,
+          product,
+        });
+  }
 
-    const result=await cloudinary.v2.uploader.upload(images[i])
-
-imageLink.push({
-    public_id:result.public_id,
-    url:result.secure_url
-})
-
-}
-
-req.body.images=imageLink;
-req.body.user=req.user._d;
-
-const product=await PRODUCT.create(req.body)
 
 
-res.status(201).json({
-    success: true,
-    product,
-  });
+
+
+
+
+ catch(err){
+console.log(err)
+ }
+
+
 
 
 }
@@ -53,7 +75,7 @@ const getAllProduct=async(req,res,next)=>{
     .search()
     .filter();
 
-  let products = await apiFeature.query;
+  let products = await apiFeature.query.clone();
 
   let filteredProductsCount = products.length;
 

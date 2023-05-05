@@ -1,5 +1,6 @@
 const jwt=require("jsonwebtoken");
 const USER = require("../models/userModel");
+const ErrorHandler = require("../utils/errorHandler");
 
 const isAuthenticatedUser=async(req,res,next)=>{
 
@@ -7,7 +8,7 @@ const {token}=req.cookies
 
 
 if(!token){
-    return next(new ErrorHander("Please Login to access this resource", 401));
+    return next(new ErrorHandler("Please Login to access this resource", 401));
 }
 
 const decodeData=jwt.verify(token,"abcde")
@@ -24,7 +25,7 @@ const authorizeRole=(...roles)=>{
     return (req,res,next)=>{
 
         if(!roles.includes(req.user.role)){
-            new ErrorHander(
+            new ErrorHandler(
                 `Role: ${req.user.role} is not allowed to access this resouce `,
                 403
               )

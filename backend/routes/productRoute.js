@@ -13,8 +13,8 @@ productRouter.route("/review").put(isAuthenticatedUser,createPRoductReview)
 
 //<--admin routes --> //
 
- productRouter.route("/admin/products").get(isAuthenticatedUser,authorizeRole("user"),getAdminProduct)
- productRouter.route("/admin/product/new").post(isAuthenticatedUser,authorizeRole("admin"),singleUpload.array("images"),createProduct)
+ productRouter.route("/admin/products").get(isAuthenticatedUser,authorizeRole("admin"),getAdminProduct)
+ productRouter.route("/admin/product/new").post(isAuthenticatedUser,singleUpload.array("images",12),createProduct)
  productRouter.route("/admin/product/:id").put(isAuthenticatedUser,authorizeRole("admin"),singleUpload.array("images"),updateProduct).delete(isAuthenticatedUser,authorizeRole("admin"),deleteProduct)
 
 

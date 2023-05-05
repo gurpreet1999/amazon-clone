@@ -17,7 +17,7 @@ const singleUpload = require("../middleware/multer");
 
 const userRouter = require("express").Router();
 
-userRouter.route("/register").post(singleUpload.single("avatar"), registerUser);
+userRouter.route("/register").post(singleUpload.single("file"),registerUser);
 userRouter.route("/login").post(loginUser);
 userRouter.route("/password/forget").post(forgotPassword);
 userRouter.route("/password/reset/:token").put(resetPassword);

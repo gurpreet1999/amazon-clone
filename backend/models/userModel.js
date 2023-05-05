@@ -62,8 +62,8 @@ return await bcryptjs.compare(password,this.password)
 
 }
 
-userSchema.methods.getJWTToken=async function(){
-return jwt.sign({id:this._id},"abcde")
+userSchema.methods.getJWTToken=function(){
+return jwt.sign({id:this._id},"abcde",{expiresIn:'15d'})
 }
 
 
